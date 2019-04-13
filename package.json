@@ -1,0 +1,8 @@
+{
+  "name": "verdaccio-ldap-8",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "verdaccio": "^3.11.6",
+    "verdaccio-ldap": "^3.1.0"
+  }
+}

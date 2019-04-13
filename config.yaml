@@ -1,0 +1,61 @@
+# host and port to listen on - overriden by Dockerfile
+listen: http://0.0.0.0:4873
+
+# a list of other known registries we can talk to
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+# path to a verdaccio root directory - defaults to same as config path passed to verdaccio command
+# NOTE - If the config passed to verdaccio command is '/verdaaccio/conf/config.yaml' don't set this
+# NOTE - If the config passed to verdaccio command is not '/verdaaccio/conf/config.yaml' don't set this to '/'
+self_path: '/'
+
+# path to a directory relative to the verdaccio root with all packages
+# NOTE - If the config passed to verdaccio command is '/verdaaccio/conf/config.yaml' set this to ../storage
+# NOTE - If the config passed to verdaccio command is not '/verdaaccio/conf/config.yaml' don't set this to ./verdaccio/storage
+storage: ./verdaccio/storage
+
+web:
+  # The document title to show in browser tabs
+  title: Verdaccio Ldap 8
+  # The url to the logo image to show in the header of the web interface
+  # logo: https://www.domain.com/logo.png
+
+# settings for the verdaccio-ldap plugin
+auth:
+  ldap:
+    type: ldap
+    groupNameAttribute: 'cn'
+    client_options:
+      url: "ldap://yourldap.domain.com"
+      adminDn: "uid=verdaccio,cn=sysaccounts,cn=etc,dc=yourldap,dc=com"
+      adminPassword: "your admin password"
+      searchBase: "cn=users,cn=accounts,dc=yourldap,dc=com"
+      searchFilter: "(uid={{username}})"
+      cache: False
+      searchAttributes:
+        - "*"
+        - memberOf
+      tlsOptions:
+        rejectUnauthorized: False
+
+# Only users who are members of the verdaccio ldap group will be able to access or publish packages:
+
+packages:
+  '@yourscope/*':
+    # your scoped packages - don't proxy requests since these packages only exist on our server
+    access: verdaccio
+    publish: verdaccio
+
+  '**':
+    # for all non scoped packages - proxy requests to 'npmjs' registry
+    access: verdaccio
+    publish: verdaccio
+    proxy: npmjs
+
+# log settings
+logs:
+  - {type: stdout, format: pretty, level: http}
+# disable file logging since this is docker...
+#  - {type: file, path: verdaccio.log, level: info}
