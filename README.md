@@ -13,7 +13,9 @@ This repository contains:
 ---
 ## Production
 
-For production use make sure the verdaccio storage directory has the correct permissions
+For production use with Docker make sure the verdaccio storage directory has the correct permissions.
+
+Verdaccio in Docker runs under the user `9999:9999` the mounted storage directory needs to match those permissions.
 
 ### Setup verdaccio storage directory permissions
 
@@ -46,6 +48,33 @@ All commands below assume that the current directory is the root of this reposit
 ---
 ## Development
 
+To run verdaccio locally, use the following commands.
+
+All commands below assume that the current directory is the root of this repository.
+
+### Setup a local verdaccio storage directory
+
+Verdaccio as the `current user on your machine` the mounted storage directory needs to match those permissions.
+
+- `mkdir -p verdaccio/storage`
+- `sudo chown -R <your-user>:<your-group> verdaccio`
+- `cd verdaccio`
+- `find . -type f |xargs sudo chmod 644`
+- `find . -type d |xargs sudo chmod 755`
+
+### Run verdaccio locally
+
+- Ensure that `config.yaml` `self_path: '/'` is **not set**.
+- `./node_modules/verdaccio/bin/verdaccio --config config.yaml`
+
+### Debug verdaccio in VS Code
+
+- Open the root of this folder with `code .`
+- Run `Verdaccio` command in `launch.json` (Available to run in the `Debug` sidebar)
+
+
+## Docker Development
+
 To build or run the Dockerfile in local development mode, use the following commands.
 
 All commands below assume that the current directory is the root of this repository.
@@ -54,6 +83,9 @@ All commands below assume that the current directory is the root of this reposit
 - `docker build --tag=verdaccio-ldap-8 .`
 
 ### Setup a local verdaccio storage mount
+
+Verdaccio in Docker runs under the user `9999:9999` the mounted storage directory needs to match those permissions.
+
 - `mkdir -p verdaccio/storage`
 - `rsync -avz -P your.storage.mount.com:/your/storage/for/verdaccio/.sinopia-db.json verdaccio/storage/`
 - `rsync -avz -P your.storage.mount.com:/your/storage/for/verdaccio/storage/@yourscope verdaccio/storage/`
@@ -64,8 +96,10 @@ All commands below assume that the current directory is the root of this reposit
 
 ### Run the verdaccio Dockerfile with a local verdaccio storage mount
 - Build the verdaccio Dockerfile
+- Ensure that `config.yaml` `self_path: '/'` is **set**
 - `docker run -it --mount src="$(pwd)/verdaccio",target=/verdaccio,type=bind --rm --name verdaccio -p 4873:4873 verdaccio-ldap-8`
 
 ### Run the verdaccio Dockerfile with a local verdaccio storage mount and interactive shell
 - Build the verdaccio Dockerfile
+- Ensure that `config.yaml` `self_path: '/'` is **set**
 - `docker run --rm -it --mount src="$(pwd)/verdaccio",target=/verdaccio,type=bind verdaccio-ldap-8 /bin/sh`

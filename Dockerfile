@@ -16,6 +16,10 @@ COPY yarn.lock yarn.lock
 RUN yarn config set registry $VERDACCIO_BUILD_REGISTRY && \
     yarn install
 
+COPY verdaccio-ldap-fix.js .
+RUN node verdaccio-ldap-fix.js
+RUN rm verdaccio-ldap-fix.js
+
 VOLUME ["/verdaccio"]
 
 ENV USER=verdaccio \

@@ -1,0 +1,8 @@
+{
+  "name": "test-verdaccio-ldap-8",
+  "license": "UNLICENSED",
+  "registry": "",
+  "dependencies": {
+   "@porterjs/app": "^1.0.12"
+  }
+}
